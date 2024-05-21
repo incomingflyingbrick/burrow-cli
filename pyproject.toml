@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "share-gpu"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.scripts]
+burrow = "share_gpu.main:app"
+
+[tool.poetry.dependencies]
+python = "^3.9.0"
+typer = {extras = ["all"], version = "^0.12.3"}
+docker = "^7.0.0"
+requests = "2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
