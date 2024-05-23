@@ -7,6 +7,7 @@ import tarfile
 import os
 import time
 import uuid
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 app = typer.Typer()
 
@@ -14,7 +15,7 @@ def print_file_content(file_path):
     try:
         with open(file_path, 'r') as file:
             content = file.read()
-            print(content)
+            return content
     except FileNotFoundError:
         print(f"Error: The file at '{file_path}' was not found.")
     except IOError as e:
@@ -66,15 +67,24 @@ def start(gram: Annotated[str, typer.Argument(help="The size of GPU memory to sh
         # gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,runtime='genv',labels={"burrow-cli-container":uuid.uuid4.hex})
         gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,labels={"burrow-cli-container":uuid.uuid4().hex})
         f = open('./sh_bin.tar', 'wb')
-        time.sleep(5)
+        with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        transient=True,
+    ) as progress:
+            progress.add_task(description="Creating GPU fractional container...", total=None)
+            time.sleep(5)
+        
         bits, stat = gpu_container.get_archive('/workspace/server.txt')
-        print(stat)
-        print(type(bits))
+        # print(stat)
+        # print(type(bits))
         for chunk in bits:
             f.write(chunk)
         f.close()
         untar_and_list_files('./sh_bin.tar')
-        print_file_content('./server.txt')
+        sshx_url = print_file_content('./server.txt')
+        print("[bold green]GPU fractional container created successfully![/bold green]")
+        print('Now you can send this link [bold blue]{}[/bold blue] to your friends, and start sharing GPU 🚀💻✨'.format(sshx_url))
     else:
         typer.echo("Wrong memory size format, size should be like 512mi or 2gi")
 
