@@ -6,6 +6,7 @@ import docker
 import tarfile
 import os
 import time
+import uuid
 
 app = typer.Typer()
 
@@ -60,13 +61,12 @@ def start(gram: Annotated[str, typer.Argument(help="The size of GPU memory to sh
         # client = docker.DockerClient(base_url='unix://var/run/docker.sock',version='1.45')
         client = docker.from_env()
         typer.echo("Start a shared GPU with GRAM size of {}".format(gram[0:-2]))
-        name = "shared_gpu_1"
+        
         env = ["GENV_GPUS={}".format(1),"GENV_GPU_MEMORY={}".format(gram)]
-        file_name = 'server.txt'
-        # client.containers.run('jyzisgod/python3:latest','sshx -q > {}.txt'.format(file_name),detach=True,remove=True,stdout=True,name=name,environment=env,runtime='genv')
-        gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,name=name)
+        # gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,runtime='genv',labels={"burrow-cli-container":uuid.uuid4.hex})
+        gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,labels={"burrow-cli-container":uuid.uuid4().hex})
         f = open('./sh_bin.tar', 'wb')
-        time.sleep(10)
+        time.sleep(5)
         bits, stat = gpu_container.get_archive('/workspace/server.txt')
         print(stat)
         print(type(bits))
@@ -79,7 +79,7 @@ def start(gram: Annotated[str, typer.Argument(help="The size of GPU memory to sh
         typer.echo("Wrong memory size format, size should be like 512mi or 2gi")
 
 
-@app.command()
+@app.command(name='stop')
 def stop(container_id: Annotated[str, typer.Argument(help="stop a container with container_id")]):
     """
     Stop a running container
@@ -88,3 +88,15 @@ def stop(container_id: Annotated[str, typer.Argument(help="stop a container with
     gpu_container = client.containers.get(container_id=container_id)
     stop_result = gpu_container.stop()
     typer.echo("Stop the container {}".format(stop_result))
+
+@app.command(name='list')
+def show_container():
+    """
+    List all running container started using burrow
+    """
+    client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+    container_list = client.containers.list(filters={ "label":'burrow-cli-container'})
+    if len(container_list)==0:
+        print("No burrow container is running")
+    else:
+        print(container_list)
