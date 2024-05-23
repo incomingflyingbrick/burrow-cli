@@ -6,6 +6,7 @@ import docker
 import tarfile
 import os
 import time
+
 app = typer.Typer()
 
 def print_file_content(file_path):

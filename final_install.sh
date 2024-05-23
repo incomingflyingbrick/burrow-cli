@@ -53,5 +53,5 @@ genv-docker run --rm ubuntu env | grep GENV_
 rm genv_run_time.py
 
 #install burrow-cli
-pip install burrow-cli
+# pip install burrow-cli
 echo "Burrow install success"

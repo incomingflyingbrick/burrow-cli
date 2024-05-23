@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "share-gpu"
+name = "burrow-cli"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "Burrow command line app"
+authors = ["Vurtne Saerdna <vurtnesaerdna@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-burrow = "share_gpu.main:app"
+burrow = "burrow_cli.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.9.0"
