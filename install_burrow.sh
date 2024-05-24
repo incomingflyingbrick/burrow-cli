@@ -53,5 +53,5 @@ genv-docker run --rm ubuntu env | grep GENV_
 rm genv_run_time.py
 
 #install burrow-cli
-pip install burrow-cli
+pip install -U burrow-cli
 echo "Burrow python library install success! now try 'burrow start 2gi' cmd to launch a fractional GPU container and share it to your friends!"
