@@ -10,7 +10,7 @@
 ## Install with a script
 Run the installation script(Only tested on Ubuntu)
 ```
-curl -sSL https://example.com/script.sh | sudo sh
+curl -sSL https://raw.githubusercontent.com/incomingflyingbrick/burrow-cli/main/install_burrow.sh | sudo sh
 ```
 
 # Quick Start
