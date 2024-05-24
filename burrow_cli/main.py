@@ -91,27 +91,40 @@ def start(
         gpu_container = None
         if split_gpu:
             typer.echo("Start a shared GPU with GRAM size of {}".format(gram[0:-2]))
-            gpu_container = client.containers.run(
-                "jyzisgod/python3:latest",
-                detach=True,
-                remove=True,
-                stdout=True,
-                environment=env,
-                runtime="genv",
-                labels={"burrow-cli-container": uuid.uuid4().hex},
-            )
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                transient=True,
+            ) as progress:
+                progress.add_task(description="Downloading docker image", total=None)
+                gpu_container = client.containers.run(
+                    "jyzisgod/python3:latest",
+                    detach=True,
+                    remove=True,
+                    stdout=True,
+                    environment=env,
+                    runtime="genv",
+                    labels={"burrow-cli-container": uuid.uuid4().hex},
+                )
         else:
             typer.echo(
                 "Start a shared container without splitting GPU {}".format(gram[0:-2])
             )
-            gpu_container = client.containers.run(
-                "jyzisgod/python3:latest",
-                detach=True,
-                remove=True,
-                stdout=True,
-                environment=env,
-                labels={"burrow-cli-container": uuid.uuid4().hex},
-            )
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                transient=True,
+            ) as progress:
+                progress.add_task(description="Downloading docker image", total=None)
+                gpu_container = client.containers.run(
+                    "jyzisgod/python3:latest",
+                    detach=True,
+                    remove=True,
+                    stdout=True,
+                    environment=env,
+                    labels={"burrow-cli-container": uuid.uuid4().hex},
+                )
+
         f = open("./sh_bin.tar", "wb")
         with Progress(
             SpinnerColumn(),
@@ -119,7 +132,8 @@ def start(
             transient=True,
         ) as progress:
             progress.add_task(
-                description="Creating GPU fractional container...usually take about 5 seconds", total=None
+                description="Creating GPU fractional container...usually take about 5 seconds",
+                total=None,
             )
             time.sleep(5)
 
@@ -133,8 +147,8 @@ def start(
         sshx_url = print_file_content("./server.txt")
         print("[bold green]GPU fractional container created successfully![/bold green]")
         print(
-            "Now you can send this link [bold blue]{}[/bold blue] or click [link={}]here[/link] to your friends, and start sharing GPU 🚀💻✨".format(
-                sshx_url, sshx_url
+            "Now you can send this link [bold blue]{}[/bold blue] to your friends, and start sharing the GPU 🚀💻✨".format(
+                sshx_url
             )
         )
     else:
