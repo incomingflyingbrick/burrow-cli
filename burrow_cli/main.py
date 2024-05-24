@@ -8,6 +8,7 @@ import os
 import time
 import uuid
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
 app = typer.Typer()
 
@@ -48,24 +49,33 @@ def untar_and_list_files(tar_path, extract_path='.'):
 @app.callback()
 def callback():
     """
-    Init
+    Callback for every command
     """
+    pass
 
 
 @app.command(name='start')
-def start(gram: Annotated[str, typer.Argument(help="The size of GPU memory to share\nformat example 512mi or 2gi, mi == MB, gi == GB")]):
+def start(gram: Annotated[str, typer.Argument(help="The size of GRAM to share\n\nExample 512mi or 2gi, mi == MB, gi == GB")],split_gpu:Annotated[bool,typer.Option(help="Choose weather to split the GPU memory or not. This option is for internal testing only, should not be used by public user.")]=True):
     """
-    Start a shared GPU container with a user set memory size
+    Start a shared GPU container with a user defined GRAM size.
+    
+    Example: burrow start 512mi -> This command launchs a GPU container with 512MB of GRAM
+
+    Example: burrow start 8gi -> This command launchs a GPU container with 8GB of GRAM
     """
+    
     pattern = r'^\d+(mi|gi)$'
     if bool(re.match(pattern, gram)):
         # client = docker.DockerClient(base_url='unix://var/run/docker.sock',version='1.45')
         client = docker.from_env()
-        typer.echo("Start a shared GPU with GRAM size of {}".format(gram[0:-2]))
-        
         env = ["GENV_GPUS={}".format(1),"GENV_GPU_MEMORY={}".format(gram)]
-        gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,runtime='genv',labels={"burrow-cli-container":uuid.uuid4().hex})
-        # gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,labels={"burrow-cli-container":uuid.uuid4().hex})
+        gpu_container = None
+        if split_gpu:
+            typer.echo("Start a shared GPU with GRAM size of {}".format(gram[0:-2]))
+            gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,runtime='genv',labels={"burrow-cli-container":uuid.uuid4().hex})
+        else:
+            typer.echo("Start a shared container without splitting GPU {}".format(gram[0:-2]))
+            gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,labels={"burrow-cli-container":uuid.uuid4().hex})
         f = open('./sh_bin.tar', 'wb')
         with Progress(
         SpinnerColumn(),
@@ -90,23 +100,32 @@ def start(gram: Annotated[str, typer.Argument(help="The size of GPU memory to sh
 
 
 @app.command(name='stop')
-def stop(container_id: Annotated[str, typer.Argument(help="stop a container with container_id")]):
+def stop(container_id: Annotated[str, typer.Argument(help="Stop a container with container_id")]):
     """
     Stop a running container
     """
-    client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+    client = docker.from_env()
+    # client = docker.DockerClient(base_url='unix://var/run/docker.sock')
     gpu_container = client.containers.get(container_id=container_id)
     stop_result = gpu_container.stop()
     typer.echo("Stop the container {}".format(stop_result))
 
+
 @app.command(name='list')
 def show_container():
     """
-    List all running container started using burrow
+    List all running containers started by Burrow
     """
-    client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+    client = docker.from_env()
+    # client = docker.DockerClient(base_url='unix://var/run/docker.sock')
     container_list = client.containers.list(filters={ "label":'burrow-cli-container'})
     if len(container_list)==0:
         print("No burrow container is running")
     else:
-        print(container_list)
+        table = Table(title="Running containers")
+        table.add_column("ID", justify="right", style="cyan", no_wrap=True)
+        table.add_column("name", style="magenta")
+        table.add_column("status", justify="right", style="green")
+        for container in container_list:
+            table.add_row(container.short_id, container.name,container.status)
+    print(table)
