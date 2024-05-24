@@ -64,7 +64,7 @@ def start(gram: Annotated[str, typer.Argument(help="The size of GPU memory to sh
         typer.echo("Start a shared GPU with GRAM size of {}".format(gram[0:-2]))
         
         env = ["GENV_GPUS={}".format(1),"GENV_GPU_MEMORY={}".format(gram)]
-        gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,runtime='genv',labels={"burrow-cli-container":uuid.uuid4.hex})
+        gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,runtime='genv',labels={"burrow-cli-container":uuid.uuid4().hex})
         # gpu_container = client.containers.run('jyzisgod/python3:latest',detach=True,remove=True,stdout=True,environment=env,labels={"burrow-cli-container":uuid.uuid4().hex})
         f = open('./sh_bin.tar', 'wb')
         with Progress(
@@ -84,7 +84,7 @@ def start(gram: Annotated[str, typer.Argument(help="The size of GPU memory to sh
         untar_and_list_files('./sh_bin.tar')
         sshx_url = print_file_content('./server.txt')
         print("[bold green]GPU fractional container created successfully![/bold green]")
-        print('Now you can send this link [bold blue]{}[/bold blue] to your friends, and start sharing GPU 🚀💻✨'.format(sshx_url))
+        print('Now you can send this link [bold blue]{}[/bold blue] or click [link={}]here[/link] to your friends, and start sharing GPU 🚀💻✨'.format(sshx_url,sshx_url))
     else:
         typer.echo("Wrong memory size format, size should be like 512mi or 2gi")
 

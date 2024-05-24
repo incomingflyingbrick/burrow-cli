@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "burrow-cli"
-version = "0.1.3"
+version = "0.1.5"
 description = "Burrow command line app, you can launch a fractional GPU contaienr with this app, and share a link of the container to your friends, you and your friends can work colloratively together"
 authors = ["Vurtne Saerdna <vurtnesaerdna@gmail.com>"]
 readme = "README.md"
