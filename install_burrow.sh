@@ -28,7 +28,7 @@ echo "Detected operating system: $os_name"
 
 # Check if Docker is installed
 if command_exists docker; then
-    echo "Docker is installed."
+    echo "Docker is installed already."
 else
     echo "Docker not found installing docker for $os_name."
     if [ $os_name = "ubuntu" ]; then
@@ -84,6 +84,9 @@ else
         sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
         sudo systemctl start docker
         sudo docker run hello-world
+    else
+        echo "You have to install Docker first in order to use Burrow"
+        
     fi
 
 
@@ -91,7 +94,7 @@ fi
 
 # Check if pip3 is installed
 if command_exists pip3; then
-    echo "pip3 is installed."
+    echo "pip3 is already installed."
 else # install pip
     echo "Installing pip3 for $os_name."
     if [ $os_name = "ubuntu" ]; then
@@ -105,6 +108,9 @@ else # install pip
     elif [ $os_name = "centos" ]; then
         # install pip using python
         python3 -m ensurepip --upgrade
+    else
+        echo "You have to install pip3 firt in order to use Burrow"
+        
     fi
 fi
 
