@@ -1,4 +1,9 @@
 #!/bin/bash
+# This script will install docker and pip3 on your system if it's not installed
+# Tested for ubuntu 24.04, 23.10 EOL, 22.04, 20.04
+# Tested for debian 12,11,10
+# Tested for centOS 9
+# centOS 8 and lower doesn't have python3 installed, so you have to install python3 yourself first
 
 # Function to check if a command is available
 command_exists() {
@@ -71,11 +76,11 @@ else
         sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
         sudo docker run hello-world
 
-    elif [ $os_name = 'centos']; then
+    elif [ $os_name = "centos" ]; then
         echo "installing docker on centos"
         sudo yum install -y yum-utils
-        sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-        sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+        sudo yum-config-manager -y --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+        sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
         sudo systemctl start docker
         sudo docker run hello-world
     fi
@@ -89,17 +94,17 @@ if command_exists pip3; then
 else # install pip
     echo "Installing pip3 for $os_name."
     if [ $os_name = "ubuntu" ]; then
-        echo "pip is not installed. Installing pip..."
-
         # Update package list and install pip
         sudo apt update -y
         sudo apt install python3-pip -y
-    elif [ $os_name = 'debian']; then
+    elif [ $os_name = "debian" ]; then
+        # Update package list and install pip
         sudo apt update -y
         sudo apt install python3-pip -y
-    elif [ $os_name = 'centos' ]; then
-        python -m ensurepip --upgrade
+    elif [ $os_name = "centos" ]; then
+        # install pip using python
+        python3 -m ensurepip --upgrade
     fi
 fi
 
-pip3 install genv
+pip3 --help
