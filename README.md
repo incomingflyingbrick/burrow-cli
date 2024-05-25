@@ -42,19 +42,19 @@ burrow stop all
 * This project is developed using Poetry and Typer
 * Python version 3.12.3
 
-# Compatbility
+# Compatbility Test
 ## Ubuntu
 * Ubuntu Noble 24.04 (LTS)
 * Ubuntu Mantic 23.10 (EOL: July 12, 2024)
 * Ubuntu Jammy 22.04 (LTS)
 * Ubuntu Focal 20.04 (LTS)
 
-## CentOS
+## CentOS (Not tested with GPU)
 * CentOS 7 (EOL: June 30, 2024) (Needs to install python3 and git first)
 * CentOS 8 (stream) (EOL: May 31, 2024) (Needs to install python3 and git first)
 * CentOS 9 (stream) (Needs to install git first)
 
 
-## Debian
+## Debian (Not tested with GPU)
 * Debian Bookworm 12 (stable) (Needs to install git first)
 * Debian Bullseye 11 (oldstable) (Needs to install git first)
