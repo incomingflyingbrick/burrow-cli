@@ -20,17 +20,17 @@ curl -sSL https://raw.githubusercontent.com/incomingflyingbrick/burrow-cli/main/
 # Quick Start
 Launch a sharable GPU container with 3GB GRAM
 
-```shell
+```bash
 burrow start 3gi
 ```
 
 List all running burrow container
-```shell
+```bash
 burrow list
 ```
 
 Stop a burrow container
-```shell
+```bash
 burrow stop <container_id>
 # or stop all container
 burrow stop all
